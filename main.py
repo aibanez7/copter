@@ -2,6 +2,8 @@ import random
 
 import pygame 
 
+import functions
+
 pygame.init()
 
 win_width = 1000
@@ -27,42 +29,6 @@ high_score = 0
 active = True
 image = pygame.image.load('helicopter.png')
 copter = pygame.transform.scale(image, (60, 60))
-
-def generate_new():
-    global player_y
-    rects = []
-    top_height = random.randint(0,300)
-    player_y = top_height + 150
-    for i in range(total_rects):
-        top_height = random.randint(top_height - spacer, top_height + spacer)
-        if top_height < 0:
-            top_height = 0
-        elif top_height > 300:
-            top_height = 300
-        top_rect = pygame.draw.rect(window, (0,255,0), [i * rect_width, 0, rect_width, top_height])
-        bot_rect = pygame.draw.rect(window, (0,255,0), [i * rect_width, top_height + 300, rect_width, win_height])
-        rects.append(top_rect)
-        rects.append(bot_rect)
-    return rects
-
-def draw_map(rects):
-    for i in range(len(rects)):
-        pygame.draw.rect(window, (0,255,0), rects[i])
-    pygame.draw.rect(window, (0,0,0), [0, 0, win_width, win_height], 10)
-
-def draw_player():
-    #draw circle hitbox and image
-    player = pygame.draw.circle(window, (0,0,0), (player_x, player_y), 20)
-    window.blit(copter, (player_x - 40, player_y - 30))
-    return player
-
-def move_player(player_y, y_speed, flying):
-    if flying:
-        y_speed += gravity
-    else:
-        y_speed -= gravity
-    player_y -= y_speed   
-    return player_y, y_speed
 
 def move_rects(rects):
     global score
@@ -93,14 +59,16 @@ while run:
     timer.tick(fps)
 
     if new_map:
-        map_rects = generate_new()
+        top_height = random.randint(0,300)
+        player_y = top_height + 150
+        map_rects = functions.generate_new(top_height, player_y, total_rects, spacer, window, rect_width, win_height)
         new_map = False
-    draw_map(map_rects)
+    functions.draw_map(map_rects, window, win_width, win_height)
 
-    player_circle = draw_player()
+    player_circle = functions.draw_player(window, player_x, player_y, copter)
 
     if active:
-        player_y, y_speed = move_player(player_y, y_speed, flying)
+        player_y, y_speed = functions.move_player(player_y, y_speed, flying, gravity)
         map_rects = move_rects(map_rects)
 
     active = check_colision(map_rects, player_circle, active)
