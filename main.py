@@ -47,11 +47,11 @@ def move_rects(rects):
             score += 1
     return rects
 
-def check_colision(map_rects, player_circle, active):
+'''def check_colision(map_rects, player_circle, active):
     for i in range(len(map_rects)):
         if player_circle.colliderect(map_rects[i]):
             active = False
-    return active
+    return active'''
 
 run = True 
 while run:
@@ -71,7 +71,7 @@ while run:
         player_y, y_speed = functions.move_player(player_y, y_speed, flying, gravity)
         map_rects = move_rects(map_rects)
 
-    active = check_colision(map_rects, player_circle, active)
+    active = functions.check_colision(map_rects, player_circle, active)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
